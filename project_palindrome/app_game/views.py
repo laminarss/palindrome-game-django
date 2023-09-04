@@ -1,7 +1,5 @@
-from django.shortcuts import render
 from django.contrib.auth.models import User as auth_user
 from django.http import JsonResponse
-from django.contrib.auth import authenticate
 import json
 from random import randint
 
