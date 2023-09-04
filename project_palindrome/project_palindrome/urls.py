@@ -26,4 +26,8 @@ urlpatterns = [
     path('deleteUser/', delete_user),
     path('login/', login_user),
     path('logout/', logout_user),
+    path('startGame/', start_game),
+    path('getBoard/', get_board),
+    path('updateBoard/', update_board),
+    path('getGameList/', get_game_list),
 ]

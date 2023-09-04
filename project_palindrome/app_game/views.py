@@ -88,7 +88,7 @@ def login_user(request):
                 session_obj = Session()
                 session_obj.to_db(data)
                 session_obj.save()
-                return JsonResponse({'status': 'User Logged in Successfully'})
+                return JsonResponse({'status': 'User Logged in Successfully', 'token': token})
             
             else:
                 if session_obj.status:
@@ -96,7 +96,7 @@ def login_user(request):
                 else:
                     session_obj.status = True
                     session_obj.save()
-                    return JsonResponse({'status': 'User Logged in Successfully'})
+                    return JsonResponse({'status': 'User Logged in Successfully', 'token': token})
         
         else:
             return JsonResponse({'status': 'User Does Not Exist'})
@@ -117,3 +117,71 @@ def logout_user(request):
     else:
         return JsonResponse({'status': 'Invalid Request Method, Only POST Method is Allowed'})
 
+def check_palindrome(string):
+    return string == string[::-1]
+
+def start_game(request):
+    if request.method == 'GET':
+        token = request.headers['token']
+        session_obj = get_session_obj(token)
+        if check_session(session_obj):
+            return JsonResponse({'status': 'User not Logged in'})
+        else:
+            game = Game.objects.filter(session = session_obj).first()
+            if game is not None:
+                game.status = False
+                game.save()
+            
+            new_game = Game()
+            new_game.session = session_obj
+            new_game.save()
+            return JsonResponse({'status':'Game Started Successfully'})
+    
+    else:
+        return JsonResponse({'status': 'Invalid Request Method, Only GET Method is Allowed'})
+
+def get_board(request):
+    if request.method == 'GET':
+        token = request.headers['token']
+        session_obj = get_session_obj(token)
+        if check_session(session_obj):
+            return JsonResponse({'status': 'User not Logged in'})
+        else:
+            game_obj = Game.objects.filter(session = session_obj).first()
+            return JsonResponse({'string': game_obj.game_string})
+    
+    else:
+        return JsonResponse({'status': 'Invalid Request Method, Only GET Method is Allowed'})
+
+def update_board(request):
+    if request.method == 'POST':
+        token = request.headers['token']
+        session_obj = get_session_obj(token)
+        if check_session(session_obj):
+            return JsonResponse({'status': 'User not Logged in'})
+        else:
+            game_obj = Game.objects.filter(session = session_obj).first()
+            if len(game_obj.game_string) == 6:
+                is_palindrome = check_palindrome(game_obj.game_string)
+                game_obj.is_palindrome = is_palindrome
+                game_obj.save()
+                return JsonResponse({'status': 'Game String is a Palindrome (Cannot Update the Board Anymore)' if is_palindrome else 'Game String is not a Palindrome (Cannot Update the Board Anymore)'})
+            else:
+                body = json.loads(request.body)
+                game_obj.game_string = game_obj.game_string + body['char'][0]
+                game_obj.save()
+                return JsonResponse({'status': 'Updated Game Board'})
+    
+    else:
+        return JsonResponse({'status': 'Invalid Request Method, Only POST Method is Allowed'})
+    
+def get_game_list(request):
+    if request.method == 'GET':
+        games = Game.objects.all()
+        game_ids = []
+        for each_game in games:
+            print(each_game)
+            game_ids.append(each_game.pk)
+        return JsonResponse({'Games IDs': game_ids})
+    else:
+        return JsonResponse({'status': 'Invalid Request Method, Only GET Method is Allowed'})

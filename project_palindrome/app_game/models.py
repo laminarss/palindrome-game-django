@@ -21,3 +21,10 @@ class Session(models.Model):
         self.token = data['token']
         self.status = data['status']
         self.user = data['user']
+
+class Game(models.Model):
+    game_string = models.CharField(max_length=255, default='')
+    is_palindrome = models.BooleanField(default=False)
+    status = models.BooleanField(default=True)
+    session = models.ForeignKey(Session, on_delete=models.CASCADE)
+
