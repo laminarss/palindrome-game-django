@@ -94,7 +94,7 @@ def login_user(request):
                 else:
                     session_obj.status = True
                     session_obj.save()
-                    return JsonResponse({'status': 'User Logged in Successfully', 'token': token})
+                    return JsonResponse({'status': 'User Logged in Successfully', 'token': session_obj.token})
         
         else:
             return JsonResponse({'status': 'User Does Not Exist'})
