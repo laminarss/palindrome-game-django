@@ -15,10 +15,10 @@ def check_session(session):
 
 def create_new_user(request):
     if request.method == 'POST':
-        body = json.loads(request.body)
-        user_name = body['name']
-        user_email = body['email']
-        user_password = body['password']
+        payload = json.loads(request.body)
+        user_name = payload['name']
+        user_email = payload['email']
+        user_password = payload['password']
 
         isUserExists = auth_user.objects.filter(email=user_email).first()
         if isUserExists:
@@ -27,7 +27,7 @@ def create_new_user(request):
             new_auth_user = auth_user.objects.create_user(username = user_name, email=user_email, password=user_password)
             if new_auth_user:
                 new_user = User()
-                new_user.to_db(body)
+                new_user.to_db(payload)
                 new_user.save()
                 return JsonResponse({'status':'User Created Successfully'})
             else:
@@ -43,9 +43,9 @@ def update_user(request):
         if check_session(session_obj):
             return JsonResponse({'status': 'User not Logged in'})
         else:
-            body = json.loads(request.body)
+            payload = json.loads(request.body)
             user_obj = User.objects.filter(id = session_obj.user.id).first()
-            user_obj.to_db(body)
+            user_obj.to_db(payload)
             user_obj.save()
             return JsonResponse({'status': 'User Details Updated Successfully'})
     
@@ -71,9 +71,9 @@ def delete_user(request):
 
 def login_user(request):
     if request.method == 'POST':
-        body = json.loads(request.body)
-        user_email = body['email']
-        user_password = body['password']
+        payload = json.loads(request.body)
+        user_email = payload['email']
+        user_password = payload['password']
 
         auth_obj = auth_user.objects.filter(email = user_email).first()
         if auth_obj is not None:
@@ -165,8 +165,8 @@ def update_board(request):
                 game_obj.save()
                 return JsonResponse({'status': 'Game String is a Palindrome (Cannot Update the Board Anymore)' if is_palindrome else 'Game String is not a Palindrome (Cannot Update the Board Anymore)'})
             else:
-                body = json.loads(request.body)
-                game_obj.game_string = game_obj.game_string + body['char'][0]
+                payload = json.loads(request.body)
+                game_obj.game_string = game_obj.game_string + payload['char'][0]
                 game_obj.save()
                 return JsonResponse({'status': 'Updated Game Board'})
     
