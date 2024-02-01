@@ -21,7 +21,8 @@ python -m venv <virtual_environment_name>
 ### 2. Activating the Virtual Environment
 ```sh
 cd <virtual_environment_name>
-Scripts/activate
+Scripts\activate (on Windows)
+source bin/activate (on MacOS)
 ```
 
 ### 3. Installing Django
