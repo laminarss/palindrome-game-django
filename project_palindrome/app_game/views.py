@@ -37,7 +37,7 @@ def create_new_user(request):
         return JsonResponse({'status':'Invalid Request Method, only POST Method is Allowed'})
 
 def update_user(request):
-    if request.method == 'POST':
+    if request.method == 'PUT':
         token = request.headers['token']
         session_obj = get_session_obj(token)
         if check_session(session_obj):
