@@ -3,7 +3,7 @@ from django.http import JsonResponse
 import json
 from random import randint
 
-from .models import Session
+from .models import Session, Game
 
 # Create your views here.
 
